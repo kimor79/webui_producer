@@ -223,7 +223,26 @@ YAHOO.WebUI.updateStatus = function(sText, sClass) {
 			YAHOO.util.Dom.addClass(oDiv, sClass);
 		}
 
-		oDiv.innerHTML = YAHOO.WebUI.nl2br(sText);
+		YAHOO.util.Dom.removeClass(oDiv, 'hidden');
+		oDiv.innerHTML =
+			YAHOO.WebUI.nl2br(YAHOO.lang.escapeHTML(sText));
+
+		if(YAHOO.util.Dom.hasClass(oDiv, 'wui-status-dismiss')) {
+			oDiv.innerHTML +=
+				'<div id="wui-status-dismiss"' +
+				' class="txt-clickable">Dismiss</div>';
+
+			YAHOO.util.Event.addListener('wui-status-dismiss',
+					'click', function() {
+				YAHOO.util.Dom.addClass('wui-status', 'hidden');
+				YAHOO.util.Dom.removeClass('wui-status',
+					'wui-api-200');
+				YAHOO.util.Dom.removeClass('wui-status',
+					'wui-api-400');
+				YAHOO.util.Dom.removeClass('wui-status',
+					'wui-api-500');
+			});
+		}
 	}
 };
 
