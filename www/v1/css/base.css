@@ -98,3 +98,7 @@ input[type="button"], input[type="reset"] {
 .wui-horizontal-list li {
 	display: inline;
 }
+
+#wui-loading {
+	width: 240px;
+}

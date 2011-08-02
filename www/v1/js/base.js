@@ -19,6 +19,7 @@ YAHOO.WebUI.alterA = function() {
 
 YAHOO.WebUI.apiOnFailure = function(o) {
 	YAHOO.WebUI.updateStatus(o.statusText, 'wui-api-400');
+	YAHOO.WebUI.loadingPanel('hide');
 };
 
 YAHOO.WebUI.apiOnSuccess = function(o) {
@@ -27,11 +28,13 @@ YAHOO.WebUI.apiOnSuccess = function(o) {
 		oOutput = YAHOO.lang.JSON.parse(o.responseText);
 	} catch(e) {
 		YAHOO.WebUI.updateStatus(o.responseText + e, 'wui-api-500');
+		YAHOO.WebUI.loadingPanel('hide');
 		return false;
 	}
 
 	if(typeof(oOutput.status) == "undefined") {
 		YAHOO.WebUI.updateStatus(o.responseText, 'wui-api-400');
+		YAHOO.WebUI.loadingPanel('hide');
 		return false;
 	}
 
@@ -39,14 +42,17 @@ YAHOO.WebUI.apiOnSuccess = function(o) {
 		case 200:
 			YAHOO.WebUI.updateStatus(oOutput.message,
 				'wui-api-200');
+			YAHOO.WebUI.loadingPanel('hide');
 			return oOutput;
 		case 400:
 			YAHOO.WebUI.updateStatus(oOutput.message,
 				'wui-api-400');
+			YAHOO.WebUI.loadingPanel('hide');
 			return false;
 	}
 
 	YAHOO.WebUI.updateStatus(oOutput.message, 'wui-api-500');
+	YAHOO.WebUI.loadingPanel('hide');
 	return false;
 };
 
@@ -64,6 +70,7 @@ YAHOO.WebUI.apiSubmit = function(sClass, oCallback) {
 		var sUrl = oEl.form.action;
 
 		YAHOO.util.Event.addListener(oEl, 'click', function(evt) {
+			YAHOO.WebUI.loadingPanel('show');
 			YAHOO.util.Event.preventDefault(evt);
 			var oData = YAHOO.WebUI.formToObject(oEl.form);
 			YAHOO.WebUI.apiPostJSON(sUrl, oData, oCallback);
@@ -104,6 +111,7 @@ YAHOO.WebUI.formSubmit = function(sClass) {
 	var oElements = YAHOO.util.Dom.getElementsByClassName(sClass);
 
 	YAHOO.util.Event.addListener(oElements, 'click', function(evt) {
+		YAHOO.WebUI.loadingPanel('show');
 		YAHOO.util.Event.preventDefault(evt);
 		var sQuery = YAHOO.WebUI.formToQuery(this.form);
 		window.location = '?' + sQuery;
@@ -114,6 +122,7 @@ YAHOO.WebUI.formSubmitOnEnter = function(sClass) {
 	var oForms = YAHOO.util.Dom.getElementsByClassName(sClass);
 
 	var doSubmit = function(evt) {
+		YAHOO.WebUI.loadingPanel('show');
 		YAHOO.util.Event.preventDefault(evt);
 		var sQuery = YAHOO.WebUI.formToQuery(this);
 		window.location = '?' + sQuery;
@@ -335,6 +344,38 @@ YAHOO.WebUI.refreshDataTable = function(oDT) {
 		oDT.getDataSource().sendRequest(oIrequest, oCallback);
 	} catch(e) {
 		YAHOO.WebUI.updateStatus(YAHOO.lang.dump(e), 'wui-api-400');
+	}
+};
+
+YAHOO.WebUI.loadingPanel = function(sAction) {
+	if(!YAHOO.WebUI.loadingPanelPL) {
+		YAHOO.WebUI.loadingPanelPL = new YAHOO.widget.Panel(
+			'wui-loading', {
+				close: false,
+				draggable: false,
+				fixedcenter: true,
+				modal: true,
+				visible: true,
+				zIndex: 99
+		});
+
+		YAHOO.WebUI.loadingPanelPL.setHeader('Loading, please wait...');
+
+		if(YAHOO.WebUI.loadingPanelImg) {
+			YAHOO.WebUI.loadingPanelPL.setBody('<img src="' +
+				YAHOO.WebUI.loadingPanelImg + '">');
+		}
+
+		YAHOO.WebUI.loadingPanelPL.render(document.body);
+	}
+
+	switch(sAction) {
+		case 'hide':
+			YAHOO.WebUI.loadingPanelPL.hide();
+			break;
+		case 'show':
+			YAHOO.WebUI.loadingPanelPL.show();
+			break;
 	}
 };
 
