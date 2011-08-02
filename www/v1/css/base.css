@@ -103,16 +103,15 @@ input[type="button"], input[type="reset"] {
 	width: 240px;
 }
 
-#wui-status {
-	position: fixed;
-	right: 43%;
-	text-align: center;
-	top: 5px;
-	width:20%
-}
-
 #wui-status-dismiss {
 	font-size: 75%;
 	margin: 0px 0 -7px 0;
 	text-align: right;
+}
+
+.wui-status-top {
+	position: fixed;
+	right: 43%;
+	top: 5px;
+	width:20%
 }
