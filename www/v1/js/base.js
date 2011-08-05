@@ -366,6 +366,77 @@ YAHOO.WebUI.refreshDataTable = function(oDT) {
 	}
 };
 
+YAHOO.WebUI.doCalendars = function() {
+	var oCal;
+	var over_cal = false;
+	var cur_field = '';
+
+	oCal = new YAHOO.widget.Calendar('wuical', 'wui-calendar');
+
+	var hideCal = function() {
+		if(!over_cal) {
+			YAHOO.util.Dom.setStyle('wui-calendar', 'display',
+				'none');
+		}
+	}
+
+	var setupListeners = function() {
+		YAHOO.util.Event.addListener('wui-calendar', 'mouseover',
+				function() {
+			over_cal = true;
+		});
+
+		YAHOO.util.Event.addListener('wui-calendar', 'mouseout',
+				function() {
+			over_cal = false;
+		});
+	}
+
+	var getDate = function() {
+		var calDate = this.getSelectedDates()[0];
+		calDate = calDate.toLocaleDateString();
+		cur_field.value = calDate;
+		over_cal = false;
+		hideCal();
+	}
+
+	var showCal = function(ev) {
+		var oTarget = YAHOO.util.Event.getTarget(ev);
+		cur_field = oTarget;
+
+		var aXY = YAHOO.util.Dom.getXY(oTarget);
+		var oDate = YAHOO.util.Dom.get(oTarget).value;
+
+		if(oDate) {
+			oDate = new Date(oDate);
+			var sMDY = (oDate.getMonth() + 1) + '/' +
+				oDate.getDate() + '/' + oDate.getFullYear();
+			oCal.cfg.setProperty('selected', sMDY);
+			oCal.cfg.setProperty('pagedate', oDate, true);
+		} else {
+			oCal.cfg.setProperty('selected', '');
+			oCal.cfg.setProperty('pagedate', new Date(), true);
+		}
+
+		oCal.render();
+		YAHOO.util.Dom.setStyle('wui-calendar', 'display', 'block');
+		aXY[1] += 20;
+		YAHOO.util.Dom.setXY('wui-calendar', aXY);
+	}
+
+	oCal.selectEvent.subscribe(getDate, oCal, true);
+	oCal.renderEvent.subscribe(setupListeners, oCal, true);
+
+	var oEls = YAHOO.util.Dom.getElementsByClassName('wui-cal');
+
+	YAHOO.util.Event.addListener(oEls, 'focus', showCal);
+	YAHOO.util.Event.addListener(oEls, 'blur', hideCal);
+
+	oCal.render();
+
+	return oCal;
+};
+
 YAHOO.WebUI.loadingPanel = function(sAction) {
 	if(!YAHOO.WebUI.loadingPanelPL) {
 		YAHOO.WebUI.loadingPanelPL = new YAHOO.widget.Panel(
@@ -407,5 +478,9 @@ YAHOO.util.Event.onContentReady('yui-main', function() {
 YAHOO.util.Event.onDOMReady(function() {
 	if(document.getElementById('wui-focus')) {
 		document.getElementById('wui-focus').focus();
+	}
+
+	if(document.getElementById('wui-calendar')) {
+		YAHOO.WebUI.doCalendars();
 	}
 });

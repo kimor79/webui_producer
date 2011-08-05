@@ -91,6 +91,10 @@ input[type="button"], input[type="reset"] {
 	border-radius: 10px;
 }
 
+#wui-calendar {
+	display: none;
+}
+
 .wui-horizontal-list {
 	list-style-type: none;
 }
