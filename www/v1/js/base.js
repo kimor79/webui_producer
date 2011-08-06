@@ -371,6 +371,9 @@ YAHOO.WebUI.doCalendars = function() {
 	var over_cal = false;
 	var cur_field = '';
 
+	var aMonths = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+		'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+
 	oCal = new YAHOO.widget.Calendar('wuical', 'wui-calendar');
 
 	var hideCal = function() {
@@ -393,9 +396,10 @@ YAHOO.WebUI.doCalendars = function() {
 	}
 
 	var getDate = function() {
-		var calDate = this.getSelectedDates()[0];
-		calDate = calDate.toLocaleDateString();
-		cur_field.value = calDate;
+		var oDate = this.getSelectedDates()[0];
+		oDate = aMonths[oDate.getMonth()] + ' ' + oDate.getDate() +
+			', ' + oDate.getFullYear();
+		cur_field.value = oDate;
 		over_cal = false;
 		hideCal();
 	}
