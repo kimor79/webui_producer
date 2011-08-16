@@ -25,6 +25,10 @@ input[type="button"], input[type="reset"] {
 	cursor: hand;
 }
 
+.nowrap {
+	white-space: nowrap;
+}
+
 .space {
 	min-height: 10px;
 }
