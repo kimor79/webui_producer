@@ -1,3 +1,7 @@
+.a-button {
+	text-decoration: none;
+}
+
 .align-center {
 	text-align: center;
 }
@@ -18,6 +22,10 @@ button, .clickable {
 .hidden {
 	display: none;
 	visibility: none;
+}
+
+img {
+	vertical-align: text-bottom;
 }
 
 input[type="button"], input[type="reset"] {
@@ -49,6 +57,10 @@ input[type="button"], input[type="reset"] {
 
 .txt-raw {
 	white-space: pre;
+}
+
+.txt-wrap {
+	word-wrap: break-word;
 }
 
 .wui-api-200 {
