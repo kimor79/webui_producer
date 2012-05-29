@@ -187,7 +187,7 @@ class WebUIProducerV2Base {
 	 * @param int $status status code, default is 302
 	 */
 	public function giveRedirect($path = '', $status = 302) {
-		$location = $this->config['base_url'] . ltrim($path, '/');
+		$location = $this->buildURI() . ltrim($path, '/');
 
 		header('Status: ' . $status);
 		header('Location: ' . $location);
