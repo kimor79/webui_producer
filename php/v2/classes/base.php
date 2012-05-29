@@ -39,7 +39,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class WebUIProducerV2Base {
 
 	protected $config = array(
-		'base_path' => '/',
+		'base_urn' => '/',
 	);
 
 	public function __construct($options = array()) {
@@ -67,18 +67,18 @@ class WebUIProducerV2Base {
 
 		$this->config = array_merge($this->config, $config);
 
-		$this->config['base_path'] = trim($this->config['base_path'],
+		$this->config['base_urn'] = trim($this->config['base_urn'],
 			'/');
 
-		if($this->config['base_path'] === '') {
-			$this->config['base_path'] = '/';
+		if($this->config['base_urn'] === '') {
+			$this->config['base_urn'] = '/';
 		} else {
-			$this->config['base_path'] = sprintf("/%s/",
-				$this->config['base_path']);
+			$this->config['base_urn'] = sprintf("/%s/",
+				$this->config['base_urn']);
 		}
 
-		if(!array_key_exists('base_host', $this->config)) {
-			$this->config['base_host'] = $this->buildHost();
+		if(!array_key_exists('base_url', $this->config)) {
+			$this->config['base_url'] = $this->buildSelfURL();
 		}
 	}
 
@@ -89,7 +89,7 @@ class WebUIProducerV2Base {
 	 * Build a base url pointing to one's self
 	 * @return string
 	 */
-	protected function buildHost() {
+	protected function buildSelfURL() {
 		$scheme = 'http';
 		$path = '';
 		$port = '';
@@ -104,16 +104,46 @@ class WebUIProducerV2Base {
 			$port = ':' . $_SERVER['SERVER_PORT'];
 		}
 
-		return sprintf("%s://%s%s%s", $scheme, $_SERVER['HTTP_HOST'],
-			$port, $this->config['base_path']);
+		return sprintf("%s://%s%s/",
+			$scheme, $_SERVER['HTTP_HOST'], $port);
 	}
 
 	/**
-	 * Build href (base_path + input)
+	 * Build uri (base_urn + input)
 	 * @param string $path
+	 * @return string
 	 */
-	public function buildHref($path = '') {
-		return $this->config['base_path'] . ltrim($path, '/');
+	public function buildSelfURN($path = '') {
+		return $this->config['base_urn'] . ltrim($path, '/');
+	}
+
+	/**
+	 * Build a uri based on a subsection of config
+	 * @param string $section
+	 * @return string
+	 */
+	public function buildURI($section = '') {
+		$base_url = $this->getConfig('base_url');
+		$base_urn = $this->getConfig('base_urn');
+
+		if($section) {
+			$t_uri = $this->getConfig($section, 'base_uri');
+			if(!is_null($t_uri)) {
+				return $t_uri;
+			}
+
+			$t_url = $this->getConfig($section, 'base_url');
+			if(!is_null($t_url)) {
+				$base_url = $t_url;
+			}
+
+			$t_urn = $this->getConfig($section, 'base_urn');
+			if(!is_null($t_urn)) {
+				$base_urn = $t_urn;
+			}
+		}
+
+		return rtrim($base_url, '/') . '/' . ltrim($base_urn, '/');
 	}
 
 	/**
@@ -157,7 +187,7 @@ class WebUIProducerV2Base {
 	 * @param int $status status code, default is 302
 	 */
 	public function giveRedirect($path = '', $status = 302) {
-		$location = $this->config['base_host'] . ltrim($path, '/');
+		$location = $this->config['base_url'] . ltrim($path, '/');
 
 		header('Status: ' . $status);
 		header('Location: ' . $location);
@@ -188,10 +218,10 @@ class WebUIProducerV2Base {
 	}
 
 	/**
-	 * Show href (wrapper around buildHref)
+	 * Show href (wrapper around buildSelfURN)
 	 */
-	public function showHref($path = '') {
-		echo call_user_func_array(array($this, 'buildHref'),
+	public function showSelfURN($path = '') {
+		echo call_user_func_array(array($this, 'buildSelfURN'),
 			func_get_args());
 	}
 
@@ -219,7 +249,7 @@ class WebUIProducerV2Base {
 	 * @param string $default which tab should be selected by default
 	 */
 	public function showTabs($div, $tabs, $default = '/') {
-		$def_path = $this->buildHref($default);
+		$def_path = $this->buildSelfURN($default);
 		$req_path = dirname($_SERVER['PHP_SELF']);
 
 		$def_path = rtrim($def_path, '/');
@@ -229,7 +259,7 @@ class WebUIProducerV2Base {
 
 		while(list($rdir, $title) = each($tabs)) {
 			$dir = ltrim($rdir, '/');
-			$href = $this->buildHref($dir);
+			$href = $this->buildSelfURN($dir);
 
 			echo '  <li';
 			if(rtrim($href, '/') == $req_path) {
