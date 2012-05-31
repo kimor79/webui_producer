@@ -25,15 +25,16 @@ W.api.onSuccess = function(o) {
 		return false;
 	}
 
-	switch(oOutput.status) {
-		case 200:
-			W.updateStatus(oOutput.message, 'wui-api-200');
-			W.loadingPanel('hide');
-			return oOutput;
-		case 400:
-			W.updateStatus(oOutput.message, 'wui-api-400');
-			W.loadingPanel('hide');
-			return false;
+	if(oOutput.status >= 200 && oOutput.status <= 299) {
+		W.updateStatus(oOutput.message, 'wui-api-200');
+		W.loadingPanel('hide');
+		return oOutput;
+	}
+
+	if(oOutput.status >= 400 && oOutput.status <= 499) {
+		W.updateStatus(oOutput.message, 'wui-api-400');
+		W.loadingPanel('hide');
+		return false;
 	}
 
 	W.updateStatus(oOutput.message, 'wui-api-500');
