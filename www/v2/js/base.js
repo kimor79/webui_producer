@@ -113,6 +113,14 @@ W.dt.formatDate = function(elCell, oRecord, oColumn, oData) {
 	}
 };
 
+W.dt.formatTruncateString = function(elCell, oRecord, oColumn, oData) {
+	if(oData.length > 50) {
+		elCell.innerHTML = oData.substring(0, 46) + ' ...';
+	} else {
+		elCell.innerHTML = oData;
+	}
+};
+
 W.dt.generateRequest = function(oState, oSelf) {
 	if(!oState) {
 		oState = { pagination: null, sortedBy: null };
