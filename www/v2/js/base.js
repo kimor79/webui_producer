@@ -303,6 +303,22 @@ W.form.submitGETEnter = function(sClass) {
 	}
 };
 
+W.form.submitJSONClick = function(sClass, oCallback) {
+	var oElements = YAHOO.util.Dom.getElementsByClassName(sClass);
+
+	for (var i = 0, len = oElements.length; i < len; i++) {
+		var oEl = oElements[i];
+		var sUrl = oEl.form.action;
+
+		YAHOO.util.Event.addListener(oEl, 'click', function(evt) {
+			W.loadingPanel('show');
+			YAHOO.util.Event.preventDefault(evt);
+			YAHOO.util.Connect.asyncRequest('POST', sUrl,
+				oCallback, W.form.toJSON(oEl.form));
+		});
+	}
+};
+
 W.form.submitPOSTClick = function(sClass, oCallback) {
 	var oElements = YAHOO.util.Dom.getElementsByClassName(sClass);
 
@@ -345,6 +361,31 @@ W.form.toGET = function(oForm) {
 	}
 
 	return aData.join('&');
+};
+
+W.form.toJSON = function(oForm) {
+	var oData = new Object();
+
+	var len = oForm.elements.length;
+	for (var i = 0; i < len; i++) {
+		var oObj = oForm.elements[i];
+
+		if(oObj.type == 'checkbox') {
+			if(oObj.checked == true) {
+				oData[oObj.name] = true;
+			} else {
+				oData[oObj.name] = false;
+			}
+
+			continue;
+		}
+
+		if(oObj.name != '') {
+			oData[oObj.name] = oObj.value;
+		}
+	}
+
+	return YAHOO.lang.JSON.stringify(oData);
 };
 
 W.form.toPOST = function(oForm) {
