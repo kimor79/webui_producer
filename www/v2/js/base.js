@@ -133,6 +133,22 @@ W.ds.newDataSource = function(sUrl, aFields) {
 	return oDatasource;
 };
 
+W.ds.parseBool = function(oData) {
+	if(oData) {
+		switch(oData) {
+		case true:
+		case 1:
+		case '1':
+		case 'on':
+		case 'true':
+		case 'yes':
+			return true;
+		}
+	}
+
+	return false;
+};
+
 W.ds.parseDate = function(oData) {
 	var oDate;
 	if(isNaN(oData)) {
@@ -183,6 +199,14 @@ W.dt.config = function(sSort, iResults, sDir) {
 
 	return oConfigs;
 };
+
+W.dt.formatBool = function(elCell, oRecord, oColumn, oData) {
+	if(oData) {
+		elCell.innerHTML = 'Yes';
+	} else {
+		elCell.innerHTML = 'No';
+	}
+}
 
 W.dt.formatDate = function(elCell, oRecord, oColumn, oData) {
 	if(oData.getFullYear() == "1969") {
