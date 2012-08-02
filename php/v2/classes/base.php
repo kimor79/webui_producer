@@ -213,8 +213,30 @@ class WebUIProducerV2Base {
 	 * Show GET (wrapper around getGET)
 	 */
 	public function showGET() {
-		echo call_user_func_array(array($this, 'getGET'),
+		$string = call_user_func_array(array($this, 'getGET'),
 			func_get_args());
+
+		$this->showHTMLValue($string);
+	}
+
+	/**
+	 * Sanitize string for use between HTML tags/quotes
+	 * e.g., <input value="HERE"> or <div>HERE</div>
+	 * @param string $string String to sanitize
+	 * @return string The sanitized string
+	 */
+	public function showHTMLValue($string) {
+		echo htmlentities($string, ENT_QUOTES);
+	}
+
+	/**
+	 * Sanitize string for use as a Javascript variable value
+	 * e.g., var foo = HERE;
+	 * @param string $string String to sanitize
+	 * @return string The sanitized string
+	 */
+	public function showJSValue($string) {
+		printf("decodeURIComponent('%s');\n", rawurlencode($string));
 	}
 
 	/**
