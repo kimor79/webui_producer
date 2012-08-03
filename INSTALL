@@ -4,7 +4,7 @@ webui_producer requires the following:
 * YUI 2 (tested with 2.9 hosted on Yahoo!)
 * A webserver (tested with Apache 2.2)
 
-Copy the files in php/ to a path in php's include_path. E.g.:
+Copy the files in php/ to <php include path>/webui_producer/. E.g.:
   cp -R php /usr/local/include/php/webui_producer
 
 Copy the files in www/ to a path accessible by the webserver. E.g.:
