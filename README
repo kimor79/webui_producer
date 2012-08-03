@@ -1,0 +1,46 @@
+webui_producer is a set of css, js, and php files to aid in building web UIs.
+
+In the calling app, an ini-style config file is required. When defining
+URIs there are several ways to do so:
+
+  base_uri = "http://somehost/some/path"
+  base_url = "http://somehost/"
+  base_urn = "/some/path"
+
+If base_uri is given then it will be used as the complete base URI. Giving
+both base_url and base_urn has the same affect.
+
+If only base_url is given, the path is assumed to be at the root of the
+webserver.
+
+If only base_urn is given, the schema, host, and port will be based on
+$_SERVER['HTTP_HOST'].
+
+If none of the URI settings are given, the URI will be at the root based on
+$_SERVER['HTTP_HOST'];
+
+Sample usage:
+
+In a php file:
+
+ define('WEBUI_PRODUCER_MYAPP', 'myapp');
+
+ include 'webui_producer/v2/classes/base.php';
+
+ try {
+         $wui = new WebUIProducerV2Base();
+ } catch (Exception $e) {
+         echo $e->getMessage();
+         exit(0);
+ }
+
+ $wui->showGET('id');
+
+In a js file:
+
+ YAHOO.util.Event.onDOMReady(function() {
+         W.form.submitGETClick('search-form');
+         W.form.submitGETEnter('enter-submit');
+ });
+
+See https://github.com/kimor79/nodegroups-webui for real usage.
